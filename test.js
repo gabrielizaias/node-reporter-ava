@@ -1,25 +1,41 @@
 import { strict as assert } from "node:assert";
-import { spawnSync } from "node:child_process";
-import { test } from "node:test";
+import { describe, test } from "node:test";
 
-test("pass", () => {
-	const child = spawnSync(process.execPath, [
-		"--test",
-		"--test-reporter", "./index.mjs",
-		"./fixtures/pass.mjs",
-	], { env: {} });
+test("test, should pass");
 
-	assert(child.stdout?.toString().split("\n")?.[0]?.startsWith("  "));
-	assert.equal(child.status, 0);
+describe("suite 1", () => {
+	test("test 1.1, should pass");
+	test("test 1.2, should pass");
 });
 
-test("fail", () => {
-	const child = spawnSync(process.execPath, [
-		"--test",
-		"--test-reporter", "./index.mjs",
-		"./fixtures/fail.mjs",
-	], { env: {} });
+test("test, should fail", () => {
+	assert.fail("failure message");
+});
 
-	assert(child.stdout?.toString().split("\n")?.[0]?.startsWith("  "));
-	assert.equal(child.status, 1);
+describe("suite 2", () => {
+	test("test 2.1, should fail", () => {
+		assert.fail("nested failure message");
+	});
+});
+
+test("write to stdout, should pass", () => {
+	console.log("stdout entry");
+});
+
+test("write to stderr, should pass", () => {
+	console.error("stderr entry");
+});
+
+describe("suite 3, empty (no assertions), should pass");
+
+describe("suite 4", () => {
+	describe("suite 4.1", () => {
+		describe("suite 4.1.1", () => {
+			test("test 4.1.1.1, should pass");
+		});
+	});
+});
+
+test("throws and fails", () => {
+	throw new Error("Failure");
 });
